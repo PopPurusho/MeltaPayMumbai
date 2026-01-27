@@ -2,16 +2,12 @@ version: '3.8'
 
 services:
   app:
-    image: composer:2.8-php8.2
-
+    image: php:8.2-fpm
     container_name: meltapay_app
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
-    depends_on:
-      - db
-    networks:
-      - meltapay-network
+    command: php-fpm
 
   web:
     image: nginx:alpine
