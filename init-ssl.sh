@@ -51,9 +51,10 @@ echo "Obtaining SSL certificate from Let's Encrypt..."
 docker-compose run --rm certbot certonly \
     --webroot \
     --webroot-path=/var/www/certbot \
-    --email admin@meltapay.com \
+    --email popurusho@gmail.com \
     --agree-tos \
     --no-eff-email \
+    --force-renewal \
     -d meltapay.com \
     -d www.meltapay.com
 
