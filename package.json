@@ -1,7 +1,7 @@
 {
   "name": "habbpos",
   "version": "1.0.0",
-  "description": "HABB POS is a POS application by [Ultimate Fosters](http://ultimatefosters.com), a brand of [The Web Fosters](http://thewebfosters.com).",
+  "description": "MeltaPay is a POS application by [Ultimate Fosters](http://ultimatefosters.com), a brand of [The Web Fosters](http://thewebfosters.com).",
   "main": "index.js",
   "directories": {
     "test": "tests"

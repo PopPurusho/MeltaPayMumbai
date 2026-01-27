@@ -81,7 +81,7 @@ cd MeltaPayMumbai
 ```bash
 # Create .env file
 cat > .env << 'EOF'
-APP_NAME="HABB POS"
+APP_NAME="MeltaPay"
 APP_TITLE=""
 APP_ENV=production
 APP_KEY=base64:W8UqtE9LHZW+gRag78o4BCbN1M0w4HdaIFdLqHJ/9PA=
