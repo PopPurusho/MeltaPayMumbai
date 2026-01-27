@@ -197,7 +197,7 @@ return [
         // Spatie\Permission\PermissionServiceProvider::class,
         Milon\Barcode\BarcodeServiceProvider::class,
         ConsoleTVs\Charts\ChartsServiceProvider::class,
-        Nwidart\Menus\LaravelMenusServiceProvider::class,
+        Nwidart\Menus\MenusServiceProvider::class,
 
         
         // Commented out - package not installed
