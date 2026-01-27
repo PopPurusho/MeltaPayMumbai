@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   app:
-    image: php:8.2-fpm
+    image: composer:2.8-php8.2
+
     container_name: meltapay_app
     working_dir: /var/www/html
     volumes:
@@ -31,10 +32,8 @@ services:
     container_name: meltapay_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: habbpos
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root 
+      MYSQL_DATABASE: habbpos   
     ports:
       - "3306:3306"
     volumes:
