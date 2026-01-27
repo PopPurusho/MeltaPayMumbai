@@ -198,7 +198,9 @@ return [
         Milon\Barcode\BarcodeServiceProvider::class,
         ConsoleTVs\Charts\ChartsServiceProvider::class,
         Nwidart\Menus\LaravelMenusServiceProvider::class,
- // Commented out - package not installed
+
+        
+        // Commented out - package not installed
         Knox\Pesapal\PesapalServiceProvider::class,
     ],
 
