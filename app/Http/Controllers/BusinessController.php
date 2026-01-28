@@ -80,6 +80,64 @@ class BusinessController extends Controller
     }
 
     /**
+     * Shows SuperAdmin verification form before registration
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function verifySuperAdmin()
+    {
+        if (! config('constants.allow_registration')) {
+            return redirect('/');
+        }
+
+        // If already verified and valid, redirect to register
+        if (session()->has('superadmin_verified_for_registration')) {
+            $verificationTime = session('superadmin_verified_at');
+            if ($verificationTime && now()->diffInMinutes($verificationTime) <= 30) {
+                return redirect()->route('business.getRegister');
+            }
+        }
+
+        return view('business.verify_superadmin');
+    }
+
+    /**
+     * Handles SuperAdmin verification
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function postVerifySuperAdmin(Request $request)
+    {
+        if (! config('constants.allow_registration')) {
+            return redirect('/');
+        }
+
+        $request->validate([
+            'superadmin_username' => 'required',
+            'superadmin_password' => 'required',
+        ]);
+
+        $username = $request->input('superadmin_username');
+        $password = $request->input('superadmin_password');
+
+        // Verify against env credentials
+        if ($username === env('SUPERADMIN_USERNAME') && $password === env('SUPERADMIN_PASSWORD')) {
+            // Set session with timestamp
+            session([
+                'superadmin_verified_for_registration' => true,
+                'superadmin_verified_at' => now()
+            ]);
+
+            return redirect()->route('business.getRegister')
+                ->with('success', 'SuperAdmin verified successfully. You can now register a new business.');
+        }
+
+        return back()
+            ->withErrors(['superadmin_username' => 'Invalid SuperAdmin credentials.'])
+            ->withInput($request->only('superadmin_username'));
+    }
+
+    /**
      * Shows registration form
      *
      * @return \Illuminate\Http\Response

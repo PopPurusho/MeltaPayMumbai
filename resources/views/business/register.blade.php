@@ -28,6 +28,14 @@
                             @lang('business.register_and_get_started_in_minutes')
                       </h2>
                 </div>
+
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <i class="fa fa-check-circle"></i> {{ session('success') }}
+                    </div>
+                @endif
+
             {!! Form::open([
                 'url' => route('business.postRegister'),
                 'method' => 'post',
