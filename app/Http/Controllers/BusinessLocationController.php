@@ -181,8 +181,11 @@ class BusinessLocationController extends Controller
 
             $location = BusinessLocation::create($input);
 
-            //Create a new permission related to the created location
-            Permission::create(['name' => 'location.'.$location->id]);
+            //Create a new permission related to the created location (if not exists)
+            Permission::firstOrCreate(['name' => 'location.'.$location->id, 'guard_name' => 'web']);
+
+            //Clear permission cache to avoid conflicts
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
             $output = ['success' => true,
                 'msg' => __('business.business_location_added_success'),

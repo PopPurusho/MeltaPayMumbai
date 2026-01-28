@@ -98,8 +98,11 @@ class SellingPriceGroupController extends Controller
 
             $spg = SellingPriceGroup::create($input);
 
-            //Create a new permission related to the created selling price group
-            Permission::create(['name' => 'selling_price_group.'.$spg->id]);
+            //Create a new permission related to the created selling price group (if not exists)
+            Permission::firstOrCreate(['name' => 'selling_price_group.'.$spg->id, 'guard_name' => 'web']);
+
+            //Clear permission cache to avoid conflicts
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
             $output = ['success' => true,
                 'data' => $spg,

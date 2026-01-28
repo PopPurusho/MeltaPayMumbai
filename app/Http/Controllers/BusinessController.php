@@ -263,8 +263,11 @@ class BusinessController extends Controller
             $this->businessUtil->newBusinessDefaultResources($business->id, $user->id);
             $new_location = $this->businessUtil->addLocation($business->id, $business_location);
 
-            //create new permission with the new location
-            Permission::create(['name' => 'location.'.$new_location->id]);
+            //create new permission with the new location (if not exists)
+            Permission::firstOrCreate(['name' => 'location.'.$new_location->id, 'guard_name' => 'web']);
+
+            //Clear permission cache to avoid conflicts
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
             DB::commit();
 
