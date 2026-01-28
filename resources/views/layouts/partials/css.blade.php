@@ -35,7 +35,7 @@
 	  display: none;
 	}
 	.patt-circ.dir {
-	  background-image: url("{{asset('/img/pattern-directionicon-arrow.png')}}");
+	  background-image: url("{{asset('img/pattern-directionicon-arrow.png')}}");
 	  background-position: center;
 	  background-repeat: no-repeat;
 	}

@@ -41,9 +41,9 @@
 		<img src="@if(count($product->media) > 0)
 						{{$product->media->first()->display_url}}
 					@elseif(!empty($product->product_image))
-						{{asset('/uploads/img/' . rawurlencode($product->product_image))}}
+						{{asset('uploads/img/' . rawurlencode($product->product_image))}}
 					@else
-						{{asset('/img/default.png')}}
+						{{asset('img/default.png')}}
 					@endif" alt="product-img" loading="lazy"style="height:50px;display: inline;margin-left: 3px; border: black;border-radius: 5px; margin-top: 5px; width: 50px;object-fit: cover;">
 
 
