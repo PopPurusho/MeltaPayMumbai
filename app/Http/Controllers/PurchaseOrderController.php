@@ -833,7 +833,10 @@ class PurchaseOrderController extends Controller
         $invoice_layout = $this->businessUtil->invoiceLayout($business_id, $location_details->invoice_layout_id);
 
         //Logo
-        $logo = $invoice_layout->show_logo != 0 && ! empty($invoice_layout->logo) && file_exists(public_path('uploads/invoice_logos/'.$invoice_layout->logo)) ? asset('uploads/invoice_logos/'.$invoice_layout->logo) : false;
+        $logo = false;
+        if ($invoice_layout->show_logo != 0 && !empty($invoice_layout->logo)) {
+            $logo = $this->transactionUtil->getUploadedFileUrl($invoice_layout->logo, 'invoice_logos');
+        }
 
         $word_format = $invoice_layout->common_settings['num_to_word_format'] ? $invoice_layout->common_settings['num_to_word_format'] : 'international';
         $total_in_words = $this->transactionUtil->numToWord($purchase->final_total, null, $word_format);

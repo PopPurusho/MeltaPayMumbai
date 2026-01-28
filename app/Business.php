@@ -129,4 +129,30 @@ class Business extends Model
 
         return $address;
     }
+
+    /**
+     * Get the logo URL with backward compatibility
+     * Checks storage/app/public first, then falls back to public/uploads
+     */
+    public function getLogoUrlAttribute()
+    {
+        if (empty($this->logo)) {
+            return null;
+        }
+
+        // Check new storage location first
+        $storage_path = 'business_logos/' . $this->logo;
+        if (\Storage::disk('public')->exists($storage_path)) {
+            return \Storage::disk('public')->url($storage_path);
+        }
+
+        // Fallback to legacy path
+        $legacy_path = public_path('uploads/business_logos/' . $this->logo);
+        if (file_exists($legacy_path)) {
+            return asset('uploads/business_logos/' . $this->logo);
+        }
+
+        // Return storage URL as default
+        return \Storage::disk('public')->url($storage_path);
+    }
 }

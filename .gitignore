@@ -21,3 +21,11 @@ yarn-error.log
 *.sql
 *.tar.gz
 /backups/ 
+
+
+
+/storage/*
+!/storage/.gitignore
+
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore

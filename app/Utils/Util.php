@@ -716,13 +716,46 @@ class Util
 
             if ($request->$file_name->getSize() <= config('constants.document_size_limit')) {
                 $new_file_name = time().'_'.$request->$file_name->getClientOriginalName();
-                if ($request->$file_name->storeAs($dir_name, $new_file_name)) {
+                
+                // Use public disk for AWS Lightsail compatibility
+                // Store in storage/app/public/{dir_name}/{filename}
+                if ($request->$file_name->storeAs($dir_name, $new_file_name, 'public')) {
                     $uploaded_file_name = $new_file_name;
                 }
             }
         }
 
         return $uploaded_file_name;
+    }
+    
+    /**
+     * Get the full URL for uploaded file
+     * Supports both legacy (public/uploads) and new (storage/app/public) paths
+     *
+     * @param  string  $filename
+     * @param  string  $dir_name
+     * @return string|null
+     */
+    public function getUploadedFileUrl($filename, $dir_name)
+    {
+        if (empty($filename)) {
+            return null;
+        }
+
+        // Check if file exists in new storage location
+        $storage_path = $dir_name . '/' . $filename;
+        if (\Storage::disk('public')->exists($storage_path)) {
+            return \Storage::disk('public')->url($storage_path);
+        }
+
+        // Fallback to legacy path for backward compatibility
+        $legacy_path = public_path('uploads/' . $dir_name . '/' . $filename);
+        if (file_exists($legacy_path)) {
+            return asset('uploads/' . $dir_name . '/' . $filename);
+        }
+
+        // Return storage URL as default (even if file doesn't exist yet)
+        return \Storage::disk('public')->url($storage_path);
     }
 
     public function serviceStaffDropdown($business_id, $location_id = null)
@@ -850,7 +883,11 @@ class Util
             //Replace business_logo
             if (strpos($value, '{business_logo}') !== false) {
                 $logo_name = $business->logo;
-                $business_logo = ! empty($logo_name) ? '<img src="'.url('uploads/business_logos/'.$logo_name).'" alt="Business Logo" >' : '';
+                $business_logo = '';
+                if (!empty($logo_name)) {
+                    $logo_url = $this->getUploadedFileUrl($logo_name, 'business_logos');
+                    $business_logo = '<img src="' . $logo_url . '" alt="Business Logo" >';
+                }
 
                 $data[$key] = str_replace('{business_logo}', $business_logo, $data[$key]);
             }

@@ -1001,13 +1001,17 @@ class TransactionUtil extends Util
         }
 
         if ($il->show_letter_head == 1) {
-            $output['letter_head'] = ! empty($il->letter_head) &&
-            file_exists(public_path('uploads/invoice_logos/'.$il->letter_head)) ?
-            asset('uploads/invoice_logos/'.$il->letter_head) : null;
+            $output['letter_head'] = null;
+            if (!empty($il->letter_head)) {
+                $output['letter_head'] = $this->getUploadedFileUrl($il->letter_head, 'invoice_logos');
+            }
         }
 
         //Logo
-        $output['logo'] = $il->show_logo != 0 && ! empty($il->logo) && file_exists(public_path('uploads/invoice_logos/'.$il->logo)) ? asset('uploads/invoice_logos/'.$il->logo) : false;
+        $output['logo'] = false;
+        if ($il->show_logo != 0 && !empty($il->logo)) {
+            $output['logo'] = $this->getUploadedFileUrl($il->logo, 'invoice_logos');
+        }
 
         //Address
         $output['address'] = '';
@@ -6339,7 +6343,10 @@ class TransactionUtil extends Util
         $invoice_layout = $businessUtil->invoiceLayout($business_id, $location_details->invoice_layout_id);
 
         //Logo
-        $logo = $invoice_layout->show_logo != 0 && ! empty($invoice_layout->logo) && file_exists(public_path('uploads/invoice_logos/'.$invoice_layout->logo)) ? asset('uploads/invoice_logos/'.$invoice_layout->logo) : false;
+        $logo = false;
+        if ($invoice_layout->show_logo != 0 && !empty($invoice_layout->logo)) {
+            $logo = $this->getUploadedFileUrl($invoice_layout->logo, 'invoice_logos');
+        }
 
         $word_format = $invoice_layout->common_settings['num_to_word_format'] ? $invoice_layout->common_settings['num_to_word_format'] : 'international';
         $total_in_words = $this->numToWord($purchase->final_total, null, $word_format);

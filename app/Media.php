@@ -39,9 +39,14 @@ class Media extends Model
      */
     public function getDisplayUrlAttribute()
     {
-        $path = asset('/uploads/media/'.rawurlencode($this->file_name));
+        // Check new storage location first
+        $storage_path = 'media/' . $this->file_name;
+        if (\Storage::disk('public')->exists($storage_path)) {
+            return \Storage::disk('public')->url($storage_path);
+        }
 
-        return $path;
+        // Fallback to legacy path
+        return asset('uploads/media/' . rawurlencode($this->file_name));
     }
 
     /**
@@ -49,9 +54,14 @@ class Media extends Model
      */
     public function getDisplayPathAttribute()
     {
-        $path = public_path('uploads/media').'/'.rawurlencode($this->file_name);
+        // Check new storage location first
+        $storage_path = 'media/' . $this->file_name;
+        if (\Storage::disk('public')->exists($storage_path)) {
+            return storage_path('app/public/' . $storage_path);
+        }
 
-        return $path;
+        // Fallback to legacy path
+        return public_path('uploads/media/' . rawurlencode($this->file_name));
     }
 
     /**
@@ -141,7 +151,10 @@ class Media extends Model
         $file_name = null;
         if ($file->getSize() <= config('constants.document_size_limit')) {
             $new_file_name = time().'_'.mt_rand().'_'.$file->getClientOriginalName();
-            if ($file->storeAs('/media', $new_file_name)) {
+            
+            // Use public disk for AWS Lightsail compatibility
+            // Store in storage/app/public/media/{filename}
+            if ($file->storeAs('media', $new_file_name, 'public')) {
                 $file_name = $new_file_name;
             }
         }
@@ -153,15 +166,9 @@ class Media extends Model
     {
         $file_name = time().'_'.mt_rand().'_media.jpg';
 
-        $output_file = public_path('uploads').'/media/'.$file_name;
-
-        // open the output file for writing
-        $ifp = fopen($output_file, 'wb');
-
-        fwrite($ifp, base64_decode($base64_string));
-
-        // clean up the file resource
-        fclose($ifp);
+        // Use storage disk for consistency
+        $decoded = base64_decode($base64_string);
+        \Storage::disk('public')->put('media/' . $file_name, $decoded);
 
         return $file_name;
     }
@@ -174,11 +181,18 @@ class Media extends Model
         $media = Media::where('business_id', $business_id)
                         ->findOrFail($media_id);
 
-        $media_path = public_path('uploads/media/'.$media->file_name);
-
-        if (file_exists($media_path)) {
-            unlink($media_path);
+        // Try deleting from new storage location first
+        $storage_path = 'media/' . $media->file_name;
+        if (\Storage::disk('public')->exists($storage_path)) {
+            \Storage::disk('public')->delete($storage_path);
+        } else {
+            // Fallback to legacy path
+            $legacy_path = public_path('uploads/media/' . $media->file_name);
+            if (file_exists($legacy_path)) {
+                unlink($legacy_path);
+            }
         }
+
         $media->delete();
     }
 
