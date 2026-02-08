@@ -130,6 +130,19 @@
 	  transform: rotate(315deg);
 	}
 </style>
+<style>
+    /* Fix for invisible checkboxes in production */
+    .icheckbox_square-blue,
+    .iradio_square-blue {
+        background-image: url("{{ asset('img/icheck_square_blue.png') }}") !important;
+    }
+    @media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+        .icheckbox_square-blue,
+        .iradio_square-blue {
+            background-image: url("{{ asset('img/icheck_square_blue@2x.png') }}") !important;
+        }
+    }
+</style>
 @if(!empty($__system_settings['additional_css']))
     {!! $__system_settings['additional_css'] !!}
 @endif
