@@ -35,8 +35,6 @@
 
     @yield('css')
 
-    <link rel="stylesheet" href="{{ asset('plugins/icheck/skins/square/blue.css') }}">
-
 </head>
 <body
     class="tw-font-sans tw-antialiased tw-text-gray-900 tw-bg-gray-100 @if ($pos_layout) hold-transition lockscreen @else hold-transition skin-@if (!empty(session('business.theme_color'))){{ session('business.theme_color') }}@else{{ 'blue-light' }} @endif sidebar-mini @endif" >
@@ -141,20 +139,6 @@
         <div>
 
             <div class="overlay tw-hidden"></div>
-
-
-            <script src="{{ asset('plugins/icheck/icheck.min.js') }}"></script>
-
-<script>
-$(document).ready(function() {
-    $('input[type="checkbox"].input-icheck, input[type="radio"].input-icheck').iCheck({
-        checkboxClass: 'icheckbox_square-blue',
-        radioClass: 'iradio_square-blue',
-        increaseArea: '20%' // optional
-    });
-});
-</script>
-
 </body>
 <style>
     @media print {
