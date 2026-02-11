@@ -1,5 +1,16 @@
 <?php
 
+// Ensure we only include view paths that actually exist.
+$view_paths = [
+    resource_path('views'),
+];
+
+$custom_views_path = base_path('custom_views');
+if (file_exists($custom_views_path) && is_dir($custom_views_path)) {
+    // Prepend custom views so they take precedence when present
+    array_unshift($view_paths, $custom_views_path);
+}
+
 return [
 
     /*
@@ -13,10 +24,7 @@ return [
     |
     */
 
-    'paths' => [
-        base_path('custom_views'),
-        resource_path('views'),
-    ],
+    'paths' => $view_paths,
 
     /*
     |--------------------------------------------------------------------------

@@ -507,7 +507,10 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
 
 //common route
 Route::middleware(['auth'])->group(function () {
-    Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+    // Keep a non-named GET endpoint for legacy sign-out links but do not
+    // assign the 'logout' name here because Auth::routes() already defines
+    // a route with that name (causes duplicate-route-name errors when serializing).
+    Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout']);
 });
 
 Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone'])->group(function () {
