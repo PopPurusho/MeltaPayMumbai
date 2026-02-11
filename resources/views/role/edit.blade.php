@@ -1664,3 +1664,86 @@
 </section>
 <!-- /.content -->
 @endsection
+
+@section('css')
+<style>
+/* Fallback styling for checkboxes if iCheck fails to load */
+.fallback-checkbox input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    margin-right: 8px !important;
+    opacity: 1 !important;
+    position: relative !important;
+    display: inline-block !important;
+}
+</style>
+@endsection
+
+@section('javascript')
+<script>
+$(document).ready(function() {
+    // Primary iCheck initialization
+    function initializeCheckboxes() {
+        if (typeof $.fn.iCheck !== 'undefined') {
+            // iCheck is available, use it
+            $('input[type="checkbox"].input-icheck, input[type="radio"].input-icheck').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%'
+            });
+            
+            // Handle select all functionality
+            $('.check_all').on('ifChanged', function() {
+                var checkboxes = $(this).closest('.check_group').find('.input-icheck');
+                if (this.checked) {
+                    checkboxes.iCheck('check');
+                } else {
+                    checkboxes.iCheck('uncheck');
+                }
+            });
+        } else {
+            // Fallback: iCheck not loaded, add basic styling and functionality
+            console.warn('iCheck not loaded, using fallback styling');
+            
+            // Add fallback class to parent container
+            $('.check_group').addClass('fallback-checkbox');
+            
+            // Make checkboxes visible with fallback styling
+            $('.input-icheck').css({
+                'opacity': '1',
+                'position': 'relative',
+                'width': '18px',
+                'height': '18px',
+                'margin-right': '8px',
+                'display': 'inline-block'
+            });
+            
+            // Handle select all functionality
+            $('.check_all').on('change', function() {
+                var checkboxes = $(this).closest('.check_group').find('.input-icheck');
+                checkboxes.prop('checked', this.checked);
+            });
+        }
+    }
+    
+    // Try to initialize after small delay to ensure DOM is ready
+    setTimeout(initializeCheckboxes, 100);
+    
+    // Force re-initialization if checkboxes are still not visible after 2 seconds
+    setTimeout(function() {
+        if ($('.input-icheck:visible').length === 0) {
+            console.log('Checkboxes still not visible, forcing fallback mode');
+            $('.check_group').addClass('fallback-checkbox');
+            $('.input-icheck').css({
+                'opacity': '1 !important',
+                'position': 'relative !important',
+                'width': '18px !important',
+                'height': '18px !important',
+                'margin-right': '8px !important',
+                'display': 'inline-block !important'
+            });
+        }
+    }, 2000);
+});
+</script>
+@endsection
