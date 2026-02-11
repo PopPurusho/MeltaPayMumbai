@@ -1667,14 +1667,51 @@
 
 @section('css')
 <style>
-/* Fallback styling for checkboxes if iCheck fails to load */
-.fallback-checkbox input[type="checkbox"] {
-    width: 18px !important;
-    height: 18px !important;
-    margin-right: 8px !important;
-    opacity: 1 !important;
-    position: relative !important;
+/*
+ * Pure-CSS override for iCheck's sprite-based checkboxes.
+ * iCheck hides the native <input> (opacity:0) and wraps it in a
+ * <div class="icheckbox_square-blue">.  If the sprite image (blue.png)
+ * fails to load on the server, that div is invisible.  The rules below
+ * make the wrapper visible using only CSS — no image dependency.
+ */
+.icheckbox_square-blue,
+.iradio_square-blue {
+    background-image: none !important;
+    background: #fff !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    width: 20px !important;
+    height: 20px !important;
     display: inline-block !important;
+    vertical-align: middle !important;
+    position: relative !important;
+    cursor: pointer !important;
+    transition: background .15s, border-color .15s !important;
+}
+.icheckbox_square-blue.hover,
+.iradio_square-blue.hover {
+    border-color: #6366f1 !important;
+}
+.icheckbox_square-blue.checked,
+.iradio_square-blue.checked {
+    background: #4f46e5 !important;
+    border-color: #4f46e5 !important;
+}
+.icheckbox_square-blue.checked::after,
+.iradio_square-blue.checked::after {
+    content: '\2713';
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+}
+.icheckbox_square-blue.disabled {
+    opacity: .5 !important;
+    cursor: default !important;
 }
 </style>
 @endsection
@@ -1682,68 +1719,17 @@
 @section('javascript')
 <script>
 $(document).ready(function() {
-    // Primary iCheck initialization
-    function initializeCheckboxes() {
-        if (typeof $.fn.iCheck !== 'undefined') {
-            // iCheck is available, use it
-            $('input[type="checkbox"].input-icheck, input[type="radio"].input-icheck').iCheck({
-                checkboxClass: 'icheckbox_square-blue',
-                radioClass: 'iradio_square-blue',
-                increaseArea: '20%'
-            });
-            
-            // Handle select all functionality
-            $('.check_all').on('ifChanged', function() {
-                var checkboxes = $(this).closest('.check_group').find('.input-icheck');
-                if (this.checked) {
-                    checkboxes.iCheck('check');
-                } else {
-                    checkboxes.iCheck('uncheck');
-                }
-            });
-        } else {
-            // Fallback: iCheck not loaded, add basic styling and functionality
-            console.warn('iCheck not loaded, using fallback styling');
-            
-            // Add fallback class to parent container
-            $('.check_group').addClass('fallback-checkbox');
-            
-            // Make checkboxes visible with fallback styling
-            $('.input-icheck').css({
-                'opacity': '1',
-                'position': 'relative',
-                'width': '18px',
-                'height': '18px',
-                'margin-right': '8px',
-                'display': 'inline-block'
-            });
-            
-            // Handle select all functionality
-            $('.check_all').on('change', function() {
-                var checkboxes = $(this).closest('.check_group').find('.input-icheck');
-                checkboxes.prop('checked', this.checked);
-            });
-        }
-    }
-    
-    // Try to initialize after small delay to ensure DOM is ready
-    setTimeout(initializeCheckboxes, 100);
-    
-    // Force re-initialization if checkboxes are still not visible after 2 seconds
-    setTimeout(function() {
-        if ($('.input-icheck:visible').length === 0) {
-            console.log('Checkboxes still not visible, forcing fallback mode');
-            $('.check_group').addClass('fallback-checkbox');
-            $('.input-icheck').css({
-                'opacity': '1 !important',
-                'position': 'relative !important',
-                'width': '18px !important',
-                'height': '18px !important',
-                'margin-right': '8px !important',
-                'display': 'inline-block !important'
-            });
-        }
-    }, 2000);
+    /*
+     * app.js already calls .iCheck() globally on all .input-icheck elements.
+     * We only need the select-all / unselect-all wiring for this page.
+     * Do NOT call .iCheck() again — double-init causes visual glitches.
+     */
+    $(document).on('ifChecked', '.check_all', function() {
+        $(this).closest('.check_group').find('.input-icheck').iCheck('check');
+    });
+    $(document).on('ifUnchecked', '.check_all', function() {
+        $(this).closest('.check_group').find('.input-icheck').iCheck('uncheck');
+    });
 });
 </script>
 @endsection
