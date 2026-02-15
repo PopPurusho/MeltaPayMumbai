@@ -278,7 +278,7 @@
                     email: {
                         email: true,
                         remote: {
-                            url: "/business/register/check-email",
+                            url: "{{ url('users/check-email') }}",
                             type: "post",
                             data: {
                                 email: function() {
@@ -297,7 +297,7 @@
                     username: {
                         minlength: 5,
                         remote: {
-                            url: "/business/register/check-username",
+                            url: "{{ url('users/check-username') }}",
                             type: "post",
                             data: {
                                 username: function() {

@@ -244,6 +244,8 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::resource('roles', RoleController::class);
 
     Route::resource('users', ManageUserController::class);
+    Route::post('/users/check-email', [BusinessController::class, 'postCheckEmail'])->name('users.check-email');
+    Route::post('/users/check-username', [BusinessController::class, 'postCheckUsername'])->name('users.check-username');
 
     Route::resource('group-taxes', GroupTaxController::class);
 
