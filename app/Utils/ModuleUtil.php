@@ -116,10 +116,13 @@ class ModuleUtil extends Util
     public function isSubscribed($business_id)
     {
         if ($this->isSuperadminInstalled()) {
-            $package = \Modules\Superadmin\Entities\Subscription::active_subscription($business_id);
+            $class = '\Modules\Superadmin\Entities\Subscription';
+            if (class_exists($class)) {
+                $package = $class::active_subscription($business_id);
 
-            if (empty($package)) {
-                return false;
+                if (empty($package)) {
+                    return false;
+                }
             }
         }
 
@@ -141,7 +144,12 @@ class ModuleUtil extends Util
                 return true;
             }
 
-            $package = \Modules\Superadmin\Entities\Subscription::active_subscription($business_id);
+            $class = '\Modules\Superadmin\Entities\Subscription';
+            if (class_exists($class)) {
+                $package = $class::active_subscription($business_id);
+            } else {
+                return true; // Assume permitted if subscription logic is missing
+            }
 
             if (empty($package)) {
                 return false;
@@ -285,7 +293,12 @@ class ModuleUtil extends Util
         $is_available = $this->isSuperadminInstalled();
 
         if ($is_available) {
-            $package = \Modules\Superadmin\Entities\Subscription::active_subscription($business_id);
+            $class = '\Modules\Superadmin\Entities\Subscription';
+            if (class_exists($class)) {
+                $package = $class::active_subscription($business_id);
+            } else {
+                return true; // No quota if subscription logic is missing
+            }
 
             if (empty($package)) {
                 return false;

@@ -244,6 +244,8 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::resource('roles', RoleController::class);
 
     Route::resource('users', ManageUserController::class);
+    Route::post('/users/check-email', [BusinessController::class, 'postCheckEmail'])->name('users.check-email');
+    Route::post('/users/check-username', [BusinessController::class, 'postCheckUsername'])->name('users.check-username');
 
     Route::resource('group-taxes', GroupTaxController::class);
 
@@ -469,6 +471,10 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::resource('manage-modules', Install\ModulesController::class)
         ->only(['index', 'update']);
     Route::get('regenerate', [Install\ModulesController::class, 'regenerate']);
+
+    // Superadmin module install/uninstall routes (used by Manage Modules page)
+    Route::get('superadmin/module/install', [\Modules\Superadmin\Http\Controllers\InstallController::class, 'index']);
+    Route::get('superadmin/module/uninstall', [\Modules\Superadmin\Http\Controllers\InstallController::class, 'uninstall']);
 
     Route::resource('warranties', WarrantyController::class);
 

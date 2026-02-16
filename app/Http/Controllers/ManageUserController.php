@@ -455,6 +455,8 @@ class ManageUserController extends Controller
 
         $user_id = auth()->user()->id;
         $username = auth()->user()->username;
+        $is_backing_to_superadmin = (session('previous_user_id') == $id);
+        
         session()->flush();
 
         if (request()->has('save_current')) {
@@ -462,6 +464,10 @@ class ManageUserController extends Controller
         }
 
         Auth::loginUsingId($id);
+
+        if ($is_backing_to_superadmin) {
+            return redirect()->action([\Modules\Superadmin\Http\Controllers\BusinessController::class, 'index']);
+        }
 
         return redirect()->route('home');
     }
