@@ -472,6 +472,10 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
         ->only(['index', 'update']);
     Route::get('regenerate', [Install\ModulesController::class, 'regenerate']);
 
+    // Superadmin module install/uninstall routes (used by Manage Modules page)
+    Route::get('superadmin/module/install', [\Modules\Superadmin\Http\Controllers\InstallController::class, 'index']);
+    Route::get('superadmin/module/uninstall', [\Modules\Superadmin\Http\Controllers\InstallController::class, 'uninstall']);
+
     Route::resource('warranties', WarrantyController::class);
 
     Route::resource('dashboard-configurator', DashboardConfiguratorController::class)
